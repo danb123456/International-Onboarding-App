@@ -197,7 +197,7 @@ export default function App() {
         </div>
         
         <h2 className="text-5xl md:text-7xl font-black italic uppercase tracking-tighter leading-[0.9] text-black">
-          Welcome to the Inner Circle
+          Welcome to FUME!
         </h2>
         
         <div className="space-y-6 text-zinc-500 text-lg leading-relaxed">
@@ -206,7 +206,7 @@ export default function App() {
             We are beyond excited to see you bring your craft to London.
           </p>
           <p className="text-sm uppercase font-black tracking-widest text-black/40">
-            This portal is designed to make your journey as effortless as your low-and-slow.
+            This portal is designed to make your journey as effortless as possible.
           </p>
         </div>
         
@@ -587,8 +587,12 @@ export default function App() {
 
   const renderProcess = () => (
     <div className="space-y-12 animate-in fade-in duration-500">
-      <div className="text-center">
+      <div className="text-center max-w-2xl mx-auto">
         <h2 className="text-5xl font-black italic uppercase tracking-tighter text-black">Protocol</h2>
+        <p className="text-zinc-500 text-sm mt-6 leading-relaxed px-4">
+          This section is designed to help us make the days before and during the live festival as smooth as possible. 
+          Please describe your cooking and prep process so we can make the necessary arrangements for you.
+        </p>
       </div>
       {data.process.map((item, index) => (
         <div key={item.id} className="fume-card p-10 rounded-[3rem] space-y-8 bg-white border border-zinc-100 shadow-sm">
