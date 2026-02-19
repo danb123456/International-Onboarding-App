@@ -11,49 +11,59 @@ function doPost(e) {
   try {
     const data = JSON.parse(e.postData.contents);
     const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const timestamp = new Date();
+    const team = data.teamName || "Unknown Team";
     
-    // Process Menu Items
-    const menuSheet = getOrCreateSheet(ss, "Menu");
+    // 1. Process Menu Items
+    const menuSheet = getOrCreateSheet(ss, "Menu", ["Timestamp", "Team", "Dish", "Desc", "Protein", "Meat Spec", "Daily Target", "Other Ingredients"]);
     data.menu.forEach(item => {
+      const others = (item.otherIngredients || []).map(ing => `${ing.name} (${ing.qty})`).join(", ");
       menuSheet.appendRow([
-        new Date(), data.teamName, item.dishName, item.description, 
-        item.meatType, item.meatSpec, item.meatQty, item.meatDate,
-        item.otherIngredients, item.otherQty, item.otherDate
+        timestamp, team, item.dishName, item.description, 
+        item.meatType, item.meatSpec, item.dailyPortionTarget, others
       ]);
     });
 
-    // Process Equipment
-    const equipSheet = getOrCreateSheet(ss, "Equipment");
+    // 2. Process Equipment
+    const equipSheet = getOrCreateSheet(ss, "Equipment", ["Timestamp", "Team", "Item", "Spec", "Qty", "Date Needed"]);
     data.equipment.forEach(item => {
       equipSheet.appendRow([
-        new Date(), data.teamName, item.item, item.spec, item.qty, item.dateNeeded
+        timestamp, team, item.item, item.spec, item.qty, item.dateNeeded
       ]);
     });
 
-    // Process Fuel
-    const fuelSheet = getOrCreateSheet(ss, "Fuel");
+    // 3. Process Fuel
+    const fuelSheet = getOrCreateSheet(ss, "Fuel", ["Timestamp", "Team", "Type", "Spec", "Qty", "Date Needed"]);
     data.fuel.forEach(item => {
       fuelSheet.appendRow([
-        new Date(), data.teamName, item.type, item.spec, item.qty, item.dateNeeded
+        timestamp, team, item.type, item.spec, item.qty, item.dateNeeded
       ]);
     });
 
-    // Process Staff
-    const staffSheet = getOrCreateSheet(ss, "Staff");
+    // 4. Process Staff
+    const staffSheet = getOrCreateSheet(ss, "Staff", ["Timestamp", "Team", "Name", "Role", "Passport #", "Passport Expiry", "DOB", "Address", "FUME Staff Required?"]);
     data.staff.forEach(person => {
       staffSheet.appendRow([
-        new Date(), data.teamName, person.fullName, person.passportNumber, 
-        person.dob, person.address, person.needsSupplementary
+        timestamp, team, person.fullName, person.role, person.passportNumber, 
+        person.passportExpiry, person.dob, person.address, 
+        data.needsSupplementaryStaff ? `Yes (${data.supplementaryStaffQty})` : "No"
       ]);
     });
 
-    // Process Flights
-    const flightSheet = getOrCreateSheet(ss, "Flights");
+    // 5. Process Flights
+    const flightSheet = getOrCreateSheet(ss, "Flights", ["Timestamp", "Team", "Outbound HUB", "Outbound Date", "Inbound HUB", "Inbound Date"]);
     const f = data.flights;
     flightSheet.appendRow([
-      new Date(), data.teamName, f.numFlights, f.outboundAirport, f.outboundDate,
-      f.inboundAirport, f.inboundDate
+      timestamp, team, f.outboundAirport, f.outboundDate, f.usArrivalAirport, f.inboundDate
     ]);
+
+    // 6. Process Protocol
+    const protocolSheet = getOrCreateSheet(ss, "Protocol", ["Timestamp", "Team", "Activity Date", "Activity", "Result/Requirements"]);
+    data.process.forEach(p => {
+      protocolSheet.appendRow([
+        timestamp, team, p.date, p.process, p.result
+      ]);
+    });
 
     return ContentService.createTextOutput(JSON.stringify({ status: "success" }))
       .setMimeType(ContentService.MimeType.JSON);
@@ -64,16 +74,14 @@ function doPost(e) {
   }
 }
 
-function getOrCreateSheet(ss, name) {
+function getOrCreateSheet(ss, name, headers) {
   let sheet = ss.getSheetByName(name);
   if (!sheet) {
     sheet = ss.insertSheet(name);
-    // Add basic headers if new
-    if (name === "Menu") sheet.appendRow(["Timestamp", "Team", "Dish", "Desc", "Meat", "Meat Spec", "Meat Qty", "Meat Date", "Other", "Other Qty", "Other Date"]);
-    if (name === "Equipment") sheet.appendRow(["Timestamp", "Team", "Item", "Spec", "Qty", "Date"]);
-    if (name === "Fuel") sheet.appendRow(["Timestamp", "Team", "Type", "Spec", "Qty", "Date"]);
-    if (name === "Staff") sheet.appendRow(["Timestamp", "Team", "Name", "Passport", "DOB", "Address", "Extra Staff"]);
-    if (name === "Flights") sheet.appendRow(["Timestamp", "Team", "Qty", "Out Airport", "Out Date", "In Airport", "In Date"]);
+    if (headers) {
+      sheet.appendRow(headers);
+      sheet.getRange(1, 1, 1, headers.length).setFontWeight("bold").setBackground("#f3f3f3");
+    }
   }
   return sheet;
 }
