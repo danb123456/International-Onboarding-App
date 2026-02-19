@@ -1,0 +1,7 @@
+{
+  "name": "FUME BBQ Festival Onboarding",
+  "description": "A gamified onboarding application for BBQ pitmasters participating in the FUME festival, designed to streamline menu, equipment, and travel logistics.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
