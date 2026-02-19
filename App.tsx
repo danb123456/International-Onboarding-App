@@ -25,9 +25,9 @@ import {
   Heart,
   X
 } from 'lucide-react';
-import { OnboardingData, Step, MenuEntry, EquipmentEntry, FuelEntry, StaffMember, ProcessEntry } from './types';
-import { FUMELogo, MEAT_OPTIONS, FUEL_OPTIONS, EQUIPMENT_TEMPLATES, REQUIREMENT_TAGS, STAFF_ROLES } from './constants';
-import { VisualSelector } from './components/VisualSelector';
+import { OnboardingData, Step, MenuEntry, EquipmentEntry, FuelEntry, StaffMember, ProcessEntry } from './types.ts';
+import { FUMELogo, MEAT_OPTIONS, FUEL_OPTIONS, EQUIPMENT_TEMPLATES, REQUIREMENT_TAGS, STAFF_ROLES } from './constants.tsx';
+import { VisualSelector } from './components/VisualSelector.tsx';
 
 const generateId = () => Math.random().toString(36).substr(2, 9);
 
@@ -372,8 +372,8 @@ export default function App() {
                 }} />
               </div>
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase text-zinc-400 tracking-widest">Weight per cut</label>
-                <input className="w-full bg-transparent border-b border-zinc-200 text-black p-2 text-sm focus:border-black outline-none" placeholder="e.g. 14lbs" value={item.weightPerCut} onChange={e => {
+                <label className="text-[10px] font-black uppercase text-zinc-400 tracking-widest">Total weight for portion requirements</label>
+                <input className="w-full bg-transparent border-b border-zinc-200 text-black p-2 text-sm focus:border-black outline-none" placeholder="e.g. 140lbs" value={item.weightPerCut} onChange={e => {
                   const copy = [...data.menu]; copy[index].weightPerCut = e.target.value; setData({...data, menu: copy});
                 }} />
               </div>
